@@ -1,0 +1,6 @@
+[Rooms|id: int; room_name: string; status: bool| create_room(); show_room()]-:>[Amity]
+[Living_space| Fellows: dict| add_fellow]-:>[Rooms]
+[Office| People: dict| add_person]-:>[Rooms]
+[Person|id: int; first_name: string; second_name: string; category: bool| add_person()]-:> [Amity]
+[Fellow|name: dict| add_fellow()] -:> [Person]
+[Staff|name: dict| add_staff()] -:> [Person]
