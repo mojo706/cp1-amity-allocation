@@ -13,11 +13,11 @@ class Person(object):
 class Fellow(Person):
     def __init__(self, person_id, name, designation, accomodated):
         super(Fellow, self).__init__(
-            person_id, name, designation="FELLOW", accomodated="N")
+            person_id, name, role="FELLOW", accomodated="N")
         self.accomodated = accomodated
 
 
 class Staff(Person):
     def __init__(self, person_id, name, designation, accomodated):
         super(Staff, self).__init__(
-            person_id, name, designation="STAFF", accomodated="N")
+            person_id, name, role="STAFF", accomodated="N")

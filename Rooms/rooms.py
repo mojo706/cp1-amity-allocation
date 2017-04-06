@@ -1,6 +1,6 @@
 class Room(object):
-    """Class that expresses the attributes of each room. Office Space and LivingSpace
-        inherit from this room.
+    """Class that expresses the attributes of each room. Office Space
+    and LivingSpace inherit from this room.
     """
 
     def __init__(self, name):
