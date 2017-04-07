@@ -3,21 +3,20 @@ class Person(object):
         inherit from this room.
     """
 
-    def __init__(self, person_id, name, designation, accomodated):
+    def __init__(self, person_id, name):
         self.uid = person_id
         self.name = name
-        self.designation = designation
-        self.accomodated = accomodated
 
 
 class Fellow(Person):
-    def __init__(self, person_id, name, designation, accomodated):
-        super(Fellow, self).__init__(
-            person_id, name, role="FELLOW", accomodated="N")
-        self.accomodated = accomodated
+    def __init__(self, person_id, name):
+        super(Fellow, self).__init__(person_id, name)
+        self.allocated = False
+        self.accomodated = False
 
 
 class Staff(Person):
-    def __init__(self, person_id, name, designation, accomodated):
-        super(Staff, self).__init__(
-            person_id, name, role="STAFF", accomodated="N")
+    def __init__(self, person_id, name, role, accomodated):
+        super(Staff, self).__init__(person_id, name)
+        self.allocated = False
+        self.accomodated = False
