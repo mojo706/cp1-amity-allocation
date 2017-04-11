@@ -12,9 +12,11 @@ class Amity(object):
         self.living_spaces = []
         self.fellows = []
         self.staff = []
-        self.waiting_list = []
+        self.office_waitlist = []
+        self.living_waitlist = []
         self.all_rooms = []
         self.all_people = self.fellows + self.staff
+        self.person_status = False
 
     def create_room(self, room_type, room_name):
         """Create a new room, a room can either be an office or living_space,
@@ -44,11 +46,6 @@ class Amity(object):
             msg = "Living Space Successfully Created"
             print(msg)
 
-
-    def randomized_allocation(self):
-        """ Allocate a person an office or living space"""
-        random.choice()
-
     def add_person(self, name, role, accomodated="N"):
         """ Add person to Amity and assign them an office space or
         living space"""
@@ -74,6 +71,58 @@ class Amity(object):
             msg = "The person {} has been successfully added".format(name)
             print(msg)
             return msg
+
+    @staticmethod
+    def allocate_office_space(self, person):
+        """ A method that randomly allocates an available office to a fellow or
+         member of staff """
+        available_offices = []
+
+        # loop through all the offices and determine all available offices
+        for free_office in self.offices:
+            if len(office.occupants) < office.capacity:
+                available_offices.append(free_office)
+
+        if available_offices:
+            allocated_room = random.choice(available_offices)
+            allocated_room.occupants.append(person)
+            person.office = allocated_room.name
+            self.person_status = True
+            msg = "{} has been allocated the livingspace {} ".format(
+                new_person.name, allocated_room.name)
+            print(msg)
+            return msg
+        else:
+            print("No available offices")
+            self.office_waitlist.append(person)
+            return "{} has been added to the office waiting list".format(
+                person.name)
+
+    @staticmethod
+    def allocate_living_space(self, person):
+        """ A method that randomly allocates an available living space to a
+         fellow """
+        available_livingspace = []
+        # loop through all the living spaces and determine all available living
+        # spaces
+        for living_space in self.all_livingspace:
+            if len(living_space.occupants) < living_space.capacity:
+                available.append(living_space)
+
+        if available_livingspace:
+            allocated_room = random.choice(available_livingspace)
+            allocated_room.occupants.append(person)
+            person.livingspace = allocated_room.name
+            self.person_status = True
+            msg = "{} has been allocated the livingspace {}".format(
+                new_person.name, allocated_room.name)
+            print(msg)
+            return msg
+        else:
+            print("No available Living Spaces")
+            self.living_waitlist.append(person)
+            return "{} has been added to the Living Space waiting list".format(
+                person.name)
 
     def allocate_unallocated(self):
         """ used to allocate fellows or staff who were previously
