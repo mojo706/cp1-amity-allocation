@@ -54,7 +54,7 @@ class Amity(object):
         roles = ["STAFF", "FELLOW"]
         role = role.upper()
 
-        if type(name) is str and type(role) is str:
+        if not isinstance(name, str) and not isinstance(role, str):
             raise ValueError(" Name and Role must be string")
 
         if role not in roles:
@@ -65,7 +65,7 @@ class Amity(object):
                 msg = "That Staff member already exists"
                 print(msg)
                 return msg
-            new_staff = Staff(person_id, name)
+            new_staff = Staff(person_id, name, role)
             self.staff.append(new_staff)
             msg = "The person {} has been successfully added".format(name)
             print(msg)
@@ -76,7 +76,7 @@ class Amity(object):
                 msg = "That Fellow already exists"
                 print(msg)
                 return msg
-            new_fellow = Fellow(person_id, name)
+            new_fellow = Fellow(person_id, name, role)
             self.fellows.append(new_fellow)
             msg = "The person {} has been successfully added".format(name)
             print(msg)
@@ -107,7 +107,6 @@ class Amity(object):
             return "{} has been added to the office waiting list".format(
                 person.name)
 
-    @staticmethod
     def allocate_living_space(self, person):
         """ A method that randomly allocates an available living space to a
          fellow """
