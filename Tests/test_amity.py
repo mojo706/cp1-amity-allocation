@@ -31,19 +31,25 @@ class TestAmity(unittest.TestCase):
 
     def test_office_created(self):
         """ test if office is successfully created"""
-        offices = len(self.amity.offices)
-        self.amity.create_room("OFFICE", "Hogwarts")
-        self.assertEqual(len(self.amity.offices), offices + 1)
+        room_msg = self.amity.create_room("OFFICE", "Hogwarts")
+        offices = self.amity.offices
+        expected = "Office Successfully Created"
+        self.assertEqual(room_msg, expected)
+        # assert that Hogwarts is in the offices list
+        self.assertTrue(any(office.name == "Hogwarts" for office in offices))
 
     def test_living_space_created(self):
         """ test whether living room is created """
-        living_spaces = len(self.amity.living_spaces)
-        self.amity.create_room("LIVINGSPACE", "Php")
-        self.assertEqual(len(self.amity.living_spaces), living_spaces + 1)
+        room_msg = self.amity.create_room("LIVINGSPACE", "Php")
+        living_spaces = self.amity.living_spaces
+        expected = "Living Space Successfully Created"
+        self.assertEqual(room_msg, expected)
+        self.assertTrue(
+            any(living_space.name == "Php" for living_space in living_spaces))
 
     def test_add_person(self):
         """ test whether person has been successfully added """
-        all_people = len(self.amity.all_people)
+        all_people = self.amity.fellows + self.amity.staff
         fellow = self.amity.add_person("Omar", "FELLOW")
         expected_output = "The person Omar has been successfully added"
         self.assertEqual(fellow, expected_output)
