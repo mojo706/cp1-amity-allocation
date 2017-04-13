@@ -47,32 +47,19 @@ class TestAmity(unittest.TestCase):
         self.assertTrue(
             any(living_space.name == "Php" for living_space in living_spaces))
 
-    def test_add_person(self):
-        """ test whether person has been successfully added """
-        all_people = self.amity.fellows + self.amity.staff
-        fellow = self.amity.add_person("Omar", "FELLOW", "Y")
-        expected_output = "The person Omar has been successfully added"
-        self.assertEqual(fellow, expected_output)
-
-    def test_allocate_person_to_room(self):
-        """ Allocate a person an office or living space """
-        pass
-
     def test_adding_fellow(self):
-        """ Is the fellow added successfully"""
-        initial_fellow_count = len(self.amity.fellows)
-        self.amity.add_person("Chuchu Omar", "")
-        new_fellow_count = len()
+        """ test whether person has been successfully added """
+        all_fellows = self.amity.fellows
+        fellow = self.amity.add_person("Omar", "FELLOW", "Y")
+        expected_output = "The fellow Omar has been successfully added"
+        self.assertEqual(fellow, expected_output)
 
     def test_adding_staff(self):
         """ Is the staff added successfully"""
-        initial_staff_count = len(self.amity.all_staff)
-
-        new_staff_count = len(self.amity.all_staff)
-        self.assertEqual(
-            new_staff_count - initial_staff_count,
-            1,
-            msg="Failed to add new staff")
+        all_staff = self.amity.staff
+        staff = self.amity.add_person("Kosy", "STAFF")
+        expected_output = "The staff member Kosy has been successfully added"
+        self.assertEqual(staff, expected_output)
 
     def test_reallocate_person(self):
         """ Move a person from one office space or living space to another"""
