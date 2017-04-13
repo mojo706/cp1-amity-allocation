@@ -1,7 +1,7 @@
 """ Contains tests for the main amity class and most of it's functions"""
 import unittest
 import os
-from amity_functions import Amity
+from amity import Amity
 
 
 class TestAmity(unittest.TestCase):
@@ -9,11 +9,10 @@ class TestAmity(unittest.TestCase):
 
     def setUp(self):
         self.amity = Amity()
-        # self.amity.create_room("OFFICE", "Addis")
-        # self.amity.create_room("OFFICE", "Accra")
-        # self.amity.create_room("LIVINGSPACE", "Valhala")
-        # self.amity.create_room("LIVINGSPACE", "Camelot")
-        self.amity.all_rooms = ["Addis", "Valhala", "Camelot", "Accra"]
+        self.amity.create_room("OFFICE", "Addis")
+        self.amity.create_room("OFFICE", "Accra")
+        self.amity.create_room("LIVINGSPACE", "Valhala")
+        self.amity.create_room("LIVINGSPACE", "Camelot")
 
     def test_input_can_only_be_string(self):
         """ test whether the input is a string or not"""

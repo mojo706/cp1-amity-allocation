@@ -9,7 +9,7 @@ class Person(object):
 
 
 class Fellow(Person):
-    def __init__(self, person_id, name):
+    def __init__(self, person_id, name, role):
         super(Fellow, self).__init__(person_id, name)
         self.allocated = False
         self.accomodated = False
