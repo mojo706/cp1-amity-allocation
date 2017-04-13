@@ -65,9 +65,10 @@ class Amity(object):
                 msg = "That Staff member already exists"
                 print(msg)
                 return msg
-            new_staff = Staff(person_id, name, role)
+            new_staff = Staff(person_id, name, role, accomodated)
             self.staff.append(new_staff)
-            msg = "The person {} has been successfully added".format(name)
+            msg = "The staff member {} has been successfully added".format(
+                name)
             print(msg)
             return msg
 
@@ -76,9 +77,9 @@ class Amity(object):
                 msg = "That Fellow already exists"
                 print(msg)
                 return msg
-            new_fellow = Fellow(person_id, name, role)
+            new_fellow = Fellow(person_id, name, role, accomodated)
             self.fellows.append(new_fellow)
-            msg = "The person {} has been successfully added".format(name)
+            msg = "The fellow {} has been successfully added".format(name)
             print(msg)
             return msg
 
@@ -149,8 +150,6 @@ class Amity(object):
     def allocate_unallocated(self, room_name):
         """ used to allocate fellows or staff who were previously
         unallocated """
-
-
 
     def reallocate_person(self):
         """ Move a person from one office space or living space to another"""
