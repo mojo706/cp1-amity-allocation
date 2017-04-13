@@ -50,7 +50,7 @@ class TestAmity(unittest.TestCase):
     def test_add_person(self):
         """ test whether person has been successfully added """
         all_people = self.amity.fellows + self.amity.staff
-        fellow = self.amity.add_person("Omar", "FELLOW")
+        fellow = self.amity.add_person("Omar", "FELLOW", "Y")
         expected_output = "The person Omar has been successfully added"
         self.assertEqual(fellow, expected_output)
 
@@ -76,6 +76,7 @@ class TestAmity(unittest.TestCase):
 
     def test_reallocate_person(self):
         """ Move a person from one office space or living space to another"""
+        pass
 
     def test_reallocation_fails_if_room_doesnt_exist(self):
         """ Cannot reallocate to a non-existent room """
@@ -84,9 +85,12 @@ class TestAmity(unittest.TestCase):
 
     def test_print_allocations(self):
         """ Print people and the rooms they have been allocated """
+        pass
 
     def test_print_unallocated(self):
         """ Print a list of people who have not been allocated a room"""
+        pass
 
     def test_save_allocations_to_file(self):
         """ Save people and the rooms they have been allocated to file"""
+        pass
