@@ -15,7 +15,6 @@ class Amity(object):
         self.office_waitlist = []
         self.living_waitlist = []
         self.all_rooms = []
-        self.all_people = self.fellows + self.staff
         self.person_status = False
 
     def create_room(self, room_type, room_name):
@@ -33,46 +32,56 @@ class Amity(object):
             return msg
 
         if room_type.upper() == "OFFICE":
-            newOffice = Office(room_name)
-            self.offices.append(newOffice)
+            new_office = Office(room_name)
+            self.offices.append(new_office)
             self.all_rooms.append(room_name)
             msg = "Office Successfully Created"
             print(msg)
+            return msg
 
         if room_type.upper() == "LIVINGSPACE":
-            newLivingSpace = Living_Space(room_name)
-            self.living_spaces.append(newLivingSpace)
+            new_living_space = Living_Space(room_name)
+            self.living_spaces.append(new_living_space)
             self.all_rooms.append(room_name)
             msg = "Living Space Successfully Created"
             print(msg)
+            return msg
 
     def add_person(self, name, role, accomodated="N"):
         """ Add person to Amity and assign them an office space or
         living space"""
         person_id = randint(1000, 9999)
+        roles = ["STAFF", "FELLOW"]
+        role = role.upper()
 
-        if not name.isalpha() and not role.isalpha():
-            raise ValueError("Invalid Input")
+        if type(name) is str and type(role) is str:
+            raise ValueError(" Name and Role must be string")
 
-        if role.upper() == "STAFF":
-            if name in self.all_people:
-                print("That Staff member already exists")
-            newStaff = Staff(person_id, name)
-            self.staff.append(newStaff)
-            msg = "The person {} has been successfully added".format(name)
-            print(msg)
-            return msg
+        if role not in roles:
+            raise ValueError("Invalid Role")
 
-        elif role.upper() == "FELLOW":
+        if role == "STAFF":
             if name in self.staff:
-                print("That Fellow already exists")
-            newFellow = Fellow(person_id, name)
-            self.fellows.append(newFellow)
+                msg = "That Staff member already exists"
+                print(msg)
+                return msg
+            new_staff = Staff(person_id, name)
+            self.staff.append(new_staff)
             msg = "The person {} has been successfully added".format(name)
             print(msg)
             return msg
 
-    @staticmethod
+        elif role == "FELLOW":
+            if name in self.fellows:
+                msg = "That Fellow already exists"
+                print(msg)
+                return msg
+            new_fellow = Fellow(person_id, name)
+            self.fellows.append(new_fellow)
+            msg = "The person {} has been successfully added".format(name)
+            print(msg)
+            return msg
+
     def allocate_office_space(self, person):
         """ A method that randomly allocates an available office to a fellow or
          member of staff """
@@ -124,9 +133,25 @@ class Amity(object):
             return "{} has been added to the Living Space waiting list".format(
                 person.name)
 
-    def allocate_unallocated(self):
+    @staticmethod
+    def print_room(self, room_name):
+        """ Prints the names of all the people in room_name on the
+             screen """
+        if room_name not in self.all_rooms:
+            msg = " The room {} doesn't exist ".format(room_name)
+        else:
+            if room_name in self.offices:
+                for person in self.offices(room_name):
+                    print(person)
+            elif room_name in self.living_spaces:
+                for person in self.living_spaces(room_name):
+                    print(person)
+
+    def allocate_unallocated(self, room_name):
         """ used to allocate fellows or staff who were previously
         unallocated """
+
+
 
     def reallocate_person(self):
         """ Move a person from one office space or living space to another"""
