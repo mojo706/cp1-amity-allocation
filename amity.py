@@ -53,6 +53,7 @@ class Amity(object):
         person_id = randint(1000, 9999)
         roles = ["STAFF", "FELLOW"]
         role = role.upper()
+        office_allocation = allocate_office_space()
 
         if not isinstance(name, str) and not isinstance(role, str):
             raise ValueError(" Name and Role must be string")
@@ -70,7 +71,7 @@ class Amity(object):
             msg = "The staff member {} has been successfully added".format(
                 name)
             print(msg)
-            return msg
+            print(self.allocate_office_space(new_staff))
 
         elif role == "FELLOW":
             if name in self.fellows:
@@ -81,7 +82,7 @@ class Amity(object):
             self.fellows.append(new_fellow)
             msg = "The fellow {} has been successfully added".format(name)
             print(msg)
-            return msg
+            print(self.allocate_office_space(new_fellow))
 
     def allocate_office_space(self, person):
         """ A method that randomly allocates an available office to a fellow or
@@ -89,9 +90,9 @@ class Amity(object):
         available_offices = []
 
         # loop through all the offices and determine all available offices
-        for free_office in self.offices:
+        for office in self.offices:
             if len(office.occupants) < office.capacity:
-                available_offices.append(free_office)
+                available_offices.append(office)
 
         if available_offices:
             allocated_room = random.choice(available_offices)
@@ -99,8 +100,7 @@ class Amity(object):
             person.office = allocated_room.name
             self.person_status = True
             msg = "{} has been allocated the livingspace {} ".format(
-                new_person.name, allocated_room.name)
-            print(msg)
+                person.name, allocated_room.name)
             return msg
         else:
             print("No available offices")
@@ -124,8 +124,7 @@ class Amity(object):
             person.livingspace = allocated_room.name
             self.person_status = True
             msg = "{} has been allocated the livingspace {}".format(
-                new_person.name, allocated_room.name)
-            print(msg)
+                person.name, allocated_room.name)
             return msg
         else:
             print("No available Living Spaces")
@@ -133,7 +132,6 @@ class Amity(object):
             return "{} has been added to the Living Space waiting list".format(
                 person.name)
 
-    @staticmethod
     def print_room(self, room_name):
         """ Prints the names of all the people in room_name on the
              screen """
@@ -150,6 +148,26 @@ class Amity(object):
     def allocate_unallocated(self, room_name):
         """ used to allocate fellows or staff who were previously
         unallocated """
+        allocations = []
+        if room_type.upper() == "LIVINGSPACE":
+            for person in self.living_waitlist:
+                print(self.allocate_living_space(person))
+                if self.person_status:
+                    allocations.append(person)
+        # Update living space waiting list
+        new_living_waitlist = list(
+            set(self.living_waitlist) - set(allocations))
+        self.living_waitlist = new_living_waitlist
+
+        if room_type.upper() == "OFFICE":
+            for person in self.office_waitlist:
+                print(self.allocate_office_space(person))
+                if self.person_status:
+                    allocations.append(person)
+        # Update office waiting list
+        new_office_waitlist = list(
+            set(self.office_waitlist) - set(allocations))
+        self.office_waitlist = new_office_waitlist
 
     def reallocate_person(self):
         """ Move a person from one office space or living space to another"""
