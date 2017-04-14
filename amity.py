@@ -116,7 +116,7 @@ class Amity(object):
         # spaces
         for living_space in self.all_livingspace:
             if len(living_space.occupants) < living_space.capacity:
-                available.append(living_space)
+                available_livingspace.append(living_space)
 
         if available_livingspace:
             allocated_room = random.choice(available_livingspace)
@@ -169,9 +169,63 @@ class Amity(object):
             set(self.office_waitlist) - set(allocations))
         self.office_waitlist = new_office_waitlist
 
-    def reallocate_person(self):
-        """ Move a person from one office space or living space to another"""
-        pass
+    def reallocate_person(self, name, room_type, r_room):
+        """ Move a person from one office or living space to another"""
+
+        if name not in fellows and name not in staff:
+            msg = " The person {} does not exist ".format(name)
+            print(msg)
+            return msg
+
+        elif r_room.upper() not in available_offices and r_room.upper(
+        ) not in available_livingspace:
+            msg = " The room {} does not exist or isn't available ".format(
+                r_room)
+            print(msg)
+            return msg
+        else:
+            if room_type.upper() == "LIVINGSPACE":
+                if r_room in available_offices and r_room not in available_livingspace:
+                    msg = "The room {} is has to be a Living Space "
+                    print(msg)
+                    return msg
+                elif name not in fellows:
+                    msg = " {} must be added and has to be a fellow ".format(
+                        name)
+                    print(msg)
+                    return msg
+                else:
+                    # loop to find current living space
+                    new_livingspace = self.living_spaces[r_room]
+                    for room in self.living_spaces:
+                        if name in self.living_spaces[room]:
+                            c_livingspace = self.living_spaces[room]
+                            c_livingspace.remove(name)
+                            new_livingspace.occupants.append(name)
+                            msg = "{} successfully reallocated to {} ".format(
+                                name, new_livingspace)
+                            print(msg)
+            elif room_type.upper() == "OFFICE":
+                if r_room in available_livingspace and r_room not in available_livingspace:
+                    msg = "The room {} is has to be a Living Space "
+                    print(msg)
+                    return msg
+                elif name not in fellows:
+                    msg = " {} must be added and has to be a fellow ".format(
+                        name)
+                    print(msg)
+                    return msg
+                else:
+                    # loop to find current living space
+                    new_office = self.offices[r_room]
+                    for room in self.offices:
+                        if name in self.offices[room]:
+                            c_offices = self.offices[room]
+                            c_offices.remove(name)
+                            new_office.occupants.append(name)
+                            msg = "{} successfully reallocated to {} ".format(
+                                name, new_office)
+                            print(msg)
 
     def print_allocations(self):
         """ Print people and the rooms they have been allocated """
