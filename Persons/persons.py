@@ -9,12 +9,12 @@ class Person(object):
 
 
 class Fellow(Person):
-    def __init__(self, person_id, name, role, accomodated):
+    def __init__(self, person_id, name, role, wants_accomodation):
         super(Fellow, self).__init__(person_id, name)
         self.allocated = False
 
 
 class Staff(Person):
-    def __init__(self, person_id, name, role, accomodated):
+    def __init__(self, person_id, name, role, wants_accomodation):
         super(Staff, self).__init__(person_id, name)
         self.allocated = False
