@@ -3,8 +3,8 @@ class Room(object):
     and LivingSpace inherit from this room.
     """
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, room_name):
+        self.room_name = room_name
         self.occupants = []
 
 
