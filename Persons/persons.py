@@ -4,17 +4,20 @@ class Person(object):
     """
 
     def __init__(self, person_id, name):
-        self.uid = person_id
+        self.person_id = person_id
         self.name = name
 
 
 class Fellow(Person):
-    def __init__(self, person_id, name, role, wants_accomodation):
+    """ Fellow Class that defines a fellow"""
+    def __init__(self, person_id, name):
         super(Fellow, self).__init__(person_id, name)
-        self.allocated = False
+        self.accomodated = None
+        self.allocated = None
 
 
 class Staff(Person):
-    def __init__(self, person_id, name, role, wants_accomodation):
+    """ Staff Class that defines a staff"""
+    def __init__(self, person_id, name):
         super(Staff, self).__init__(person_id, name)
-        self.allocated = False
+        self.allocated = None
