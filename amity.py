@@ -51,7 +51,7 @@ class Amity(object):
                 msg = "Living Space Successfully Created"
                 print(msg)
                 return msg
-            
+
             else:
                 msg = "Room type can only be an office or a living space"
                 print(msg)
@@ -211,9 +211,42 @@ class Amity(object):
                 msg += "\n {} ".format(person.name)
 
             return msg
+
     def print_allocations(self, filename=None):
-        """ This method prints a list of all staff and fellows, that have been allocated an office or living space or both"""
-        pass
+        """ Prints a list of allocations onto the screen. Specifying the optional -o option here outputs the registered allocations to a txt file."""
+        response = ""
+        if len(self.living_spaces) == 0:
+            response = "There are currently no living spaces\n\n"
+
+        else:
+            response = ("\n\nLIST OF EACH LIVING SPACE AND IT'S OCCUPANTS\n" +
+                        "*" * 50 + "\n")
+            for room in self.living_spaces:
+                response += room.room_name.upper() + "\n" + ("*" * 50 + "\n")
+                people = [person.name for person in room.occupants]
+                response += ", ".join(people) + "\n\n\n\n"
+
+        if len(self.offices) == 0:
+            response += "There are currently no offices"
+
+        else:
+            response = ("\n\nLIST OF EACH OFFICE AND IT'S OCCUPANTS\n" +
+                        "*" * 50 + "\n")
+            for room in self.offices:
+                response += room.room_name.upper() + "\n" + ("*" * 50 + "\n")
+                people = [person.name for person in room.occupants]
+                response += ", ".join(people) + "\n\n\n\n"
+        if not filename:
+            print(response)
+            return response
+        else:
+            print("Saving output data to file...")
+            txt_file = open(filename + ".txt", "w+")
+            txt_file.write(response)
+            txt_file.close()
+            return ("\033[1m \nData has been successfully saved to {}.txt\n \033[0m"
+                    .format(filename))
+
     def print_unallocated(self, filename=None):
         """ This method prints a list of all staff and fellows, that have not been allocated any office or living space. """
         total_waitlist = self.office_waitlist + self.living_waitlist
@@ -249,32 +282,30 @@ class Amity(object):
             return ("\033[1m \nData has been successfully saved to {}.txt\n \033[0m"
                     .format(filename))
 
+    def load_people(self):
+        """ This method adds people to rooms from a txt file. """
+        filepath = 'people.txt'
+        if not os.path.isfile(filepath):
+            msg = "{} is not a valid file path.".format(filepath)
+            print(msg)
+            return msg
+        with open(filepath, 'r') as f:
+            for line in f:
+                word_list = line.split()
+                # print(word_list)
+                f_name = word_list[0]
+                l_name = word_list[1]
+                role = word_list[2]
+                if len(word_list) != 4:
+                    wants_accomodation = "N"
+                else:
+                    wants_accomodation = word_list[3]
+                # print(wants_accomodation)
+                self.add_person(f_name, l_name, role, wants_accomodation)
+        msg = "People were loaded successfully!"
+        print(msg)
+        return msg
 
-    # def allocate_unallocated(self, room_type, room_name):
-    #     """ used to allocate fellows or staff who were previously
-    #     unallocated """
-    #     allocations = []
-    #     if room_type.upper() == "LIVINGSPACE":
-    #         for person in self.living_waitlist:
-    #             print(self.allocate_living_space(person))
-    #             if self.person_status:
-    #                 allocations.append(person)
-    #     # Update living space waiting list
-    #     new_living_waitlist = list(
-    #         set(self.living_waitlist) - set(allocations))
-    #     self.living_waitlist = new_living_waitlist
-
-    #     if room_type.upper() == "OFFICE":
-    #         for person in self.office_waitlist:
-    #             print(self.allocate_office_space(person))
-    #             if self.person_status:
-    #                 allocations.append(person)
-    #     # Update office waiting list
-    #     new_office_waitlist = list(
-    #         set(self.office_waitlist) - set(allocations))
-    #     self.office_waitlist = new_office_waitlist
-    def load_people(self, filename):
-        pass
     def reallocate_person(self, name, new_room_name):
         """ This method is used to reallocate a person from one room to another"""
         all_people = self.fellows + self.staff
@@ -289,8 +320,8 @@ class Amity(object):
             msg = "The room {} does not exist".format(new_room_name)
             print(msg)
             return msg
-        import pdb
-        pdb.set_trace()
+        # import pdb
+        # pdb.set_trace()
         try:
             reallocated_person = [
                 person for person in all_people if person.name == name
@@ -436,3 +467,7 @@ class Amity(object):
 
             msg = "Data from {} loaded Successfully!.".format(database_name)
             return msg
+
+
+a = Amity()
+a.print_allocations()
