@@ -34,6 +34,7 @@ from docopt import docopt, DocoptExit
 from amity import Amity
 
 
+
 def docopt_cmd(func):
     def fn(self, arg):
         try:
@@ -100,7 +101,10 @@ class AppAmity(cmd.Cmd):
         Amity.add_person(args['<f_name>'], args['<l_name>'], role, args['<wants_accomodation>'])
 
     @docopt_cmd
-    def do_reallocate_person
+    def do_reallocate_person(self, args):
+        """ Usage: reallocate_person <name> <new_room_name> """
+        
+
 
 if __name__ == "__main__":
     try:
