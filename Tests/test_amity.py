@@ -24,14 +24,14 @@ class TestAmity(unittest.TestCase):
             self.amity.create_room("Office", {})
 
     def test_existing_room_name(self):
-        self.amity.create_room("OFFICE", "Accra")
-        room_msg = self.amity.create_room("OFFICE", "Accra")
+        self.amity.create_room("OFFICE", ["Accra"])
+        room_msg = self.amity.create_room("OFFICE", ["Accra"])
         expected = "The room Accra has already been created"
         self.assertEqual(room_msg, expected)
 
     def test_office_created(self):
         """ test if office is successfully created"""
-        room_msg = self.amity.create_room("OFFICE", "Hogwarts")
+        room_msg = self.amity.create_room("OFFICE", ["Hogwarts"])
         offices = self.amity.offices
         expected = "Office Successfully Created"
         self.assertEqual(room_msg, expected)
@@ -41,7 +41,7 @@ class TestAmity(unittest.TestCase):
 
     def test_living_space_created(self):
         """ test whether living room is created """
-        room_msg = self.amity.create_room("LIVINGSPACE", "Php")
+        room_msg = self.amity.create_room("LIVINGSPACE", ["Php"])
         living_spaces = self.amity.living_spaces
         expected = "Living Space Successfully Created"
         self.assertEqual(room_msg, expected)
