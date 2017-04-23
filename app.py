@@ -2,12 +2,9 @@
  This example uses docopt with the built in cmd module to demonstrate an
  interactive command application.
  Usage:
-    Amity create_room (Office|Living-Space|Space)<room_name>...
-    Amity list_rooms
-    Amity delete_room <room_identifier>
-    Amity add_person <person_name> <person_gender> (Fellow|Staff) [<wants_accommodation>]
-    Amity list_people
-    Amity delete_person <person_identifier>
+    Amity create_room <room_type> <room_names>...
+    Amity add_person <f_name> <l_name> (Fellow|Staff) [<wants_accomodation>]
+    Amity reallocate_person <name> <new_room_name>
     Amity allocate_unallocated
     Amity reallocate_person <person_identifier> <new_room_name>
     Amity load_people
@@ -32,7 +29,6 @@ import sys
 
 from docopt import docopt, DocoptExit
 from amity import Amity
-
 
 
 def docopt_cmd(func):
@@ -63,13 +59,10 @@ def docopt_cmd(func):
 
 
 class AppAmity(cmd.Cmd):
-    
-    def intro():
-        print ('It works')
-    
-    introduction = intro()
+
     prompt = 'Amity->>>'
     file = None
+    Amity = Amity()
 
     def do_help(self, args):
         pass
@@ -77,37 +70,87 @@ class AppAmity(cmd.Cmd):
     @docopt_cmd
     def do_create_room(self, args):
         """ Usage: create_room <room_type> <room_names>..."""
+        room_type = args["<room_type>"]
+        room_names = args["<room_names>"]
 
+        for room in room_names:
+            try:
+                self.Amity.create_room(room_type, room)
+            except:
+                print("Something went wrong.")
 
-        if args['room_type'].uppper() == "OFFICE":
-            room_type = "OFFICE"
-        elif args['room_type'].uppper() == "LIVING SPACE":
-            room_type = "LIVING SPACE"
-        else:
-            room_type = args['room_type'].uppper()
-        
-        Amity.create_room(self, room_type, args['<room_names>'])
-    
     @docopt_cmd
     def do_add_person(self, args):
-        """ Usage: add_person <f_name> <l_name> (Fellow|Staff) [<wants_accomodation>] """
-        print(args)
+        """ Usage: add_person <f_name> <l_name> <role> [<wants_accomodation>] """
+        try:
+            if args["<role>"] == "Fellow":
+                role = "FELLOW"
+            else:
+                role = "STAFF"
 
-        if args['Fellow']:
-            role = "FELLOW"
-        else:
-            role = "STAFF"
-        
-        Amity.add_person(args['<f_name>'], args['<l_name>'], role, args['<wants_accomodation>'])
+            self.Amity.add_person(
+                args['<f_name>'], args['<l_name>'], role, args['<wants_accomodation>'])
+        except Exception as e:
+            print(e.args)
 
     @docopt_cmd
     def do_reallocate_person(self, args):
-        """ Usage: reallocate_person <name> <new_room_name> """
-        
+        """ Usage: reallocate_person <f_name> <l_name> <new_room_name> """
+
+        self.Amity.reallocate_person(
+            args["<f_name>"], args["<l_name>"], args["<new_room_name>"])
+
+    @docopt_cmd
+    def do_load_people(self, args):
+        """ Usage: load_people <filename>"""
+
+        self.Amity.load_people(args["<filename>"])
+
+    @docopt_cmd
+    def do_print_allocations(self, args):
+        """ Usage: print_allocations [-o=<filename>] """
+
+        if not args["-o"]:
+            self.Amity.print_allocations()
+
+        elif args["-o"] != None:
+            # args["-o"] = "allocations"
+            self.Amity.print_allocations(args["-o"])
+
+    @docopt_cmd
+    def do_print_unallocated(self, args):
+        """ Usage: print_unallocated [-o=<filename>] """
+
+        if not args["-o"]:
+            self.Amity.print_unallocated()
+
+        elif args["-o"] != None:
+            self.Amity.print_unallocated(args["-o"])
+
+    @docopt_cmd
+    def do_print_room(self, args):
+        """ Usage: print_room <room_name> """
+
+        self.Amity.print_room(args["<room_name>"])
+
+    @docopt_cmd
+    def do_save_state(self, args):
+        """ Usage: save_state [--db=<database_name>] """
+        if not args["--db"]:
+            args["--db"] = "amity_db"
+
+        self.Amity.save_state(args["--db"])
+
+    @docopt_cmd
+    def do_load_state(self, args):
+        """ Usage: load_state <database_name> """
+
+        self.Amity.load_state(args["<database_name>"])
 
 
 if __name__ == "__main__":
     try:
+        print(__doc__)
         AppAmity().cmdloop()
     except KeyboardInterrupt:
         print("Exiting Application. Catch you later!")
