@@ -1,6 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
  This example uses docopt with the built in cmd module to demonstrate an
  interactive command application.
+
  Usage:
     Amity create_room <room_type> <room_names>...
     Amity add_person <f_name> <l_name> (Fellow|Staff) [<wants_accomodation>]
@@ -16,19 +19,25 @@
     Amity (-i | --interactive)
     Amity (-h | --help)
     Amity (--version)
+
  Options:
     -i, --interactive   Interactive Mode
-    -h, --help Show on this screen and then exit
+    -h, --help   Show this screen and exit
     --version   Show version and exit
     -o=filename    Specify output file
     --db=database_name Database to save session data
  """
+
 import cmd
 import os
 import sys
+import time
 
 from docopt import docopt, DocoptExit
+from pyfiglet import figlet_format, Figlet
+from termcolor import cprint
 from amity import Amity
+from clint.textui import colored, indent, puts
 
 
 def docopt_cmd(func):
@@ -40,7 +49,7 @@ def docopt_cmd(func):
 
             # The DocoptExit is thrown when the args do not match
             # We print a message to the user and the usage block
-            print("Invalid Command!")
+            puts(colored.red("Invalid Command!"))
             print(error)
             return
 
@@ -58,14 +67,25 @@ def docopt_cmd(func):
     return fn
 
 
-class AppAmity(cmd.Cmd):
+def launch():
+    time.sleep(2)
+    with indent(84):
+        puts(colored.magenta(figlet_format('Amity SP', font='sub-zero')))
+    time.sleep(1)
+    with indent(60):
+        puts(
+            colored.cyan("Welcome to the Amity Space Allocator." +
+                         "Here is a list of commands for your use " +
+                         "Type 'help' anytime to access available commands"))
+    with indent(84):
+        puts(colored.blue(__doc__))
 
-    prompt = 'Amity->>>'
+
+class AppAmity(cmd.Cmd):
+    launch()
+    prompt = (colored.magenta('\n  ⚡  '))
     file = None
     Amity = Amity()
-
-    def do_help(self, args):
-        pass
 
     @docopt_cmd
     def do_create_room(self, args):
@@ -88,8 +108,8 @@ class AppAmity(cmd.Cmd):
             else:
                 role = "STAFF"
 
-            self.Amity.add_person(
-                args['<f_name>'], args['<l_name>'], role, args['<wants_accomodation>'])
+            self.Amity.add_person(args['<f_name>'], args['<l_name>'], role,
+                                  args['<wants_accomodation>'])
         except Exception as e:
             print(e.args)
 
@@ -97,8 +117,9 @@ class AppAmity(cmd.Cmd):
     def do_reallocate_person(self, args):
         """ Usage: reallocate_person <f_name> <l_name> <new_room_name> """
 
-        self.Amity.reallocate_person(
-            args["<f_name>"], args["<l_name>"], args["<new_room_name>"])
+        print(
+            self.Amity.reallocate_person(args["<f_name>"], args["<l_name>"],
+                                         args["<new_room_name>"]))
 
     @docopt_cmd
     def do_load_people(self, args):
@@ -108,14 +129,17 @@ class AppAmity(cmd.Cmd):
 
     @docopt_cmd
     def do_print_allocations(self, args):
-        """ Usage: print_allocations [-o=<filename>] """
+        """ Usage: print_allocations [--o=filename] """
 
-        if not args["-o"]:
-            self.Amity.print_allocations()
+        filename = args["--o"]
 
-        elif args["-o"] != None:
-            # args["-o"] = "allocations"
-            self.Amity.print_allocations(args["-o"])
+        self.Amity.print_allocations(filename)
+        # if not args["-o"]:
+        #     self.Amity.print_allocations()
+
+        # elif args["-o"] != None:
+        #     # args["-o"] = "allocations"
+        #     self.Amity.print_allocations(args["-o"])
 
     @docopt_cmd
     def do_print_unallocated(self, args):
@@ -147,10 +171,15 @@ class AppAmity(cmd.Cmd):
 
         self.Amity.load_state(args["<database_name>"])
 
+    def do_quit(self, args):
+        """ Quits out of Interactive Mode """
+        print("Exiting Application. Catch you later!")
+
+        exit()
+
 
 if __name__ == "__main__":
     try:
-        print(__doc__)
         AppAmity().cmdloop()
     except KeyboardInterrupt:
         print("Exiting Application. Catch you later!")
