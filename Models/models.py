@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+
 class PersonModel(Base):
     """create a person table"""
     __tablename__ = 'person'
@@ -16,6 +17,7 @@ class PersonModel(Base):
     office_space = Column(String(32), ForeignKey('room.name'))
     living_space = Column(String(32), ForeignKey('room.name'))
 
+
 class RoomModel(Base):
     """Create the rooms table
     """
@@ -24,8 +26,11 @@ class RoomModel(Base):
     name = Column(String(32), nullable=False)
     room_type = Column(String(32), nullable=False)
     room_capacity = Column(Integer, nullable=False)
-    room_occupants = relationship("PersonModel", foreign_keys="PersonModel.office_space")
-    room_occupants = relationship("PersonModel", foreign_keys="PersonModel.living_space")
+    room_occupants = relationship(
+        "PersonModel", foreign_keys="PersonModel.office_space")
+    room_occupants = relationship(
+        "PersonModel", foreign_keys="PersonModel.living_space")
+
 
 class CreateDb(object):
     """creating database connection to object"""
@@ -39,4 +44,5 @@ class CreateDb(object):
         self.engine = create_engine('sqlite:///' + self.db_name)
         self.session = sessionmaker()
         self.session.configure(bind=self.engine)
+
         Base.metadata.create_all(self.engine)
