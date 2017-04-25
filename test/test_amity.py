@@ -15,25 +15,27 @@ class TestAmity(unittest.TestCase):
         # self.amity.create_room("OFFICE", "Accra")
         # self.amity.create_room("LIVINGSPACE", "Camelot")
 
-    def test_input_can_only_be_string(self):
-        """ test whether the input is a string or not"""
-        # Test wrong room type
-        room_msg = self.amity.create_room("2", "Tsavo")
-        expected_msg = "Invalid Input For Room Type"
-        self.assertEqual(room_msg, expected_msg)
-
+    def test_create_room_invalid_room_name_input(self):
+        """ Test creating room fails with invalid room name"""
         # Test wrong room name
         room_msg = self.amity.create_room("Office", "{}")
         expected_msg = "Invalid Input For Room Name"
         self.assertEqual(room_msg, expected_msg)
 
-    def test_existing_room_name(self):
+    def test_create_room_invalid_room_type_input(self):
+        """ Test whether the input is a string or not"""
+        # Test wrong room type
+        room_msg = self.amity.create_room("2", "Tsavo")
+        expected_msg = "Invalid Input For Room Type"
+        self.assertEqual(room_msg, expected_msg)
+
+    def test_create_room_existing_room_name(self):
         self.amity.create_room("OFFICE", "Accra")
         room_msg = self.amity.create_room("OFFICE", "Accra")
         expected = "The room ACCRA has already been created"
         self.assertEqual(room_msg, expected)
 
-    def test_office_created(self):
+    def test_create_room_office_created(self):
         """ test if office is successfully created"""
         room_msg = self.amity.create_room("OFFICE", "Hogwarts")
         offices = self.amity.offices
@@ -43,7 +45,7 @@ class TestAmity(unittest.TestCase):
         self.assertTrue(
             any(office.room_name == "HOGWARTS" for office in offices))
 
-    def test_living_space_created(self):
+    def test_create_room_living_space_created(self):
         """ test whether living room is created """
         room_msg = self.amity.create_room("LIVINGSPACE", "Php")
         living_spaces = self.amity.living_spaces
@@ -53,8 +55,53 @@ class TestAmity(unittest.TestCase):
             any(living_space.room_name == "PHP"
                 for living_space in living_spaces))
 
-    def test_adding_fellow(self):
+    def test_create_room_invalid_room_name(self):
+        room_msg = self.amity.create_room("TOILET", "Loo")
+        expected_output = "Room type can only be an office or a living space"
+        self.assertEqual(room_msg, expected_output)
+
+    def test_allocate_office_space_no_available_office(self):
+        room_msg = self.amity.allocate_office_space("Alex")
+        expected_output = "No available offices"
+        self.assertEqual(room_msg, expected_output)
+
+    def test_allocate_living_space_no_available_living_space(self):
+        room_msg = self.amity.allocate_living_space("Alex")
+        expected_output = "No available living space"
+        self.assertEqual(room_msg, expected_output)
+
+    def test_add_person_invalid_name_input(self):
+        room_msg = self.amity.add_person("mojo706", "Eugene", "Staff")
+        expected_output = "First and Last name must be alphabets"
+        self.assertEqual(room_msg, expected_output)
+
+    def test_add_person_invalid_role_input(self):
+        room_msg = self.amity.add_person("Omar", "Eugene", "CATERER")
+        expected_output = "Invalid Role"
+        self.assertEqual(room_msg, expected_output)
+
+    def test_add_person_adding_staff(self):
         """ test whether person has been successfully added """
+        self.amity.create_room("OFFICE", "Addis")
+        room_msg = self.amity.add_person("Omar", "Eugene", "STAFF")
+        expected_output = "The staff member OMAR EUGENE has been successfully added and allocated the office ADDIS"
+        self.assertEqual(room_msg, expected_output)
+
+    def test_add_person_staff_already_exists(self):
+        """ test whether person has been successfully added """
+        self.amity.add_person("Omar", "Eugene", "STAFF")
+        room_msg = self.amity.add_person("Omar", "Eugene", "STAFF")
+        expected_output = "That Staff member already exists"
+        self.assertEqual(room_msg, expected_output)
+
+    def test_add_person_adding_staff_no_offices(self):
+        """ test whether staff has been successfully added with no office"""
+        room_msg = self.amity.add_person("Omar", "Eugene", "STAFF")
+        expected_output = "The staff member OMAR EUGENE has been successfully added and will be allocated an office once it's available."
+        self.assertEqual(room_msg, expected_output)
+
+    def test_add_person_adding_fellow(self):
+        """ test whether fellow has been successfully added """
         self.amity.create_room("LIVINGSPACE", "Valhala")
         self.amity.create_room("OFFICE", "Addis")
         all_fellows = self.amity.fellows
@@ -64,12 +111,38 @@ class TestAmity(unittest.TestCase):
         self.assertTrue(
             any(fellow.name == "OMAR EUGENE" for fellow in all_fellows))
 
-    def test_adding_fellow_no_available_office(self):
-        """ test whether person has been successfully added """
+    def test_add_person_fellow_already_exists(self):
+        """ test whether fellow already existed """
+        self.amity.add_person("Omar", "Eugene", "FELLOW", "Y")
+        room_msg = self.amity.add_person("Omar", "Eugene", "FELLOW", "Y")
+        expected_output = "That Fellow already exists"
+        self.assertEqual(room_msg, expected_output)
+
+    def test_add_person_adding_fellow_no_available_office(self):
+        """ test whether fellow has been successfully added with no office space"""
         self.amity.create_room("LIVINGSPACE", "Valhala")
         all_fellows = self.amity.fellows
         success_msg = self.amity.add_person("Omar", "Eugene", "FELLOW", "Y")
-        expected_output = "The fellow OMAR EUGENE has been successfully added and allocated the office ADDIS and the living space VALHALA"
+        expected_output = "The fellow OMAR EUGENE has been successfully added and allocated the living space VALHALA but sorry we do not have any available offices"
+        self.assertEqual(success_msg, expected_output)
+        self.assertTrue(
+            any(fellow.name == "OMAR EUGENE" for fellow in all_fellows))
+    
+    def test_add_person_adding_fellow_no_available_living_space(self):
+        """ test whether fellow has been successfully added with no office space"""
+        self.amity.create_room("OFFICE", "Valhala")
+        all_fellows = self.amity.fellows
+        success_msg = self.amity.add_person("Omar", "Eugene", "FELLOW", "Y")
+        expected_output = "The fellow OMAR EUGENE has been successfully added and allocated the office VALHALA but sorry we do not have any available living spaces"
+        self.assertEqual(success_msg, expected_output)
+        self.assertTrue(
+            any(fellow.name == "OMAR EUGENE" for fellow in all_fellows))
+
+    def test_add_person_adding_fellow_no_available_living_space_and_office(self):
+        """ test whether person has been successfully added """
+        all_fellows = self.amity.fellows
+        success_msg = self.amity.add_person("Omar", "Eugene", "FELLOW", "Y")
+        expected_output = "The fellow OMAR EUGENE has been successfully added and will be allocated an office and living space once they're available"
         self.assertEqual(success_msg, expected_output)
         self.assertTrue(
             any(fellow.name == "OMAR EUGENE" for fellow in all_fellows))
@@ -90,8 +163,10 @@ class TestAmity(unittest.TestCase):
         self.amity.create_room("OFFICE", "Addis")
         staff = self.amity.add_person("Kosy", "DThree", "STAFF")
         self.amity.create_room("OFFICE", "Accra")
+
         reallocated = self.amity.reallocate_person("Kosy", "DThree", "Accra")
         expected_output = "KOSY DTHREE has been successfully reallocated to ACCRA"
+
         self.assertEqual(reallocated, expected_output)
 
     def test_reallocation_fails_if_room_doesnt_exist(self):
@@ -121,24 +196,10 @@ class TestAmity(unittest.TestCase):
 
     def test_print_unallocated_saves_to_filename(self):
         """ Print a list of people who have not been allocated a room"""
-        self.amity.create_room("OFFICE", "Addis")
         self.amity.add_person("Kosy", "Kironde", "STAFF")
-        self.amity.add_person("Janoosh", "Ebrahim", "FELLOW")
-        self.amity.add_person("Munyi", "Jonathan", "FELLOW")
-        self.amity.add_person("Tina", "Murimi", "FELLOW")
-        self.amity.add_person("Joe", "Nzau", "FELLOW")
-        self.amity.add_person("Ahmed", "Yusuf", "FELLOW")
-        self.amity.add_person("Alex", "Ngugi", "FELLOW")
-        self.amity.add_person("Jonathan", "Kamau", "FELLOW")
-        self.amity.add_person("Paul", "Upendo", "FELLOW")
-        self.amity.add_person("Dj", "Mulobi", "FELLOW")
         unallocated = self.amity.print_unallocated("test")
-        expected_output = "\033[1m \nData has been successfully saved to test.txt\n \033[0m"
+        expected_output = "Data has been successfully saved to test.txt"
         self.assertEqual(unallocated, expected_output)
-
-    def test_save_allocations_to_file(self):
-        """ Save people and the rooms they have been allocated to file"""
-        pass
 
     def test_save_state(self):
         """ Tests whether the current state of the app has been saved to a database """

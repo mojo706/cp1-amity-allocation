@@ -1,0 +1,14 @@
+[report]
+    show_missing = True
+[run]
+omit =
+    psycopg2.py
+    */psycopg2/*
+    sqlalchemy.py
+    */sqlalchemy/*
+    *decimal.py
+    *numbers.py
+    sqlite3.py
+    */sqlite3/*
+    *tabulate.py
+    */.virtualenvs/cp-amity/lib/python3.6/site-packages/*
