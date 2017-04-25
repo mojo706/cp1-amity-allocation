@@ -1,12 +1,13 @@
 import os
 import random
 
-
-from Persons.persons import Person, Fellow, Staff
+from Persons.persons import Fellow, Staff, Person
 from Rooms.rooms import Room, Office, Living_Space
 from Models.models import Base, CreateDb, PersonModel, RoomModel
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from termcolor import cprint, colored, COLORS
+from clint.textui import colored, puts
 """ This file contains all the functions of the amity cli app """
 
 
@@ -30,20 +31,21 @@ class Amity(object):
         room = []
         office_name_list = [room.room_name for room in self.offices]
         livingspace_name_list = [room.room_name for room in self.living_spaces]
+        room_name = room_name.upper()
 
         if not room_name.isalpha():
             msg = "Invalid Input For Room Name"
-            print(msg)
+            puts(colored.red(msg))
             return msg
 
         elif not room_type.isalpha():
             msg = "Invalid Input For Room Type"
-            print(msg)
+            puts(colored.red(msg))
             return msg
 
         elif room_name in office_name_list or room_name in livingspace_name_list:
             msg = "The room {} has already been created".format(room_name)
-            print(msg)
+            puts(colored.yellow(msg))
             return msg
 
         elif room_type.upper() == "OFFICE":
@@ -51,7 +53,7 @@ class Amity(object):
             self.offices.append(new_office)
             room.append(room_name)
             msg = "The Office {} was created successfully".format(room_name)
-            print(msg)
+            puts(colored.green(msg))
             return msg
 
         elif room_type.upper() == "LIVINGSPACE":
@@ -60,12 +62,12 @@ class Amity(object):
             room.append(room_name)
             msg = "The Living Space {} was created successfully".format(
                 room_name)
-            print(msg)
+            puts(colored.green(msg))
             return msg
 
         else:
             msg = " Room type can only be an office or a living space"
-            print(msg)
+            puts(colored.yellow(msg))
             return msg
 
     def allocate_office_space(self, person):
@@ -124,7 +126,7 @@ class Amity(object):
         if role == "STAFF":
             if name in [staff.name for staff in self.staff]:
                 msg = "That Staff member already exists"
-                print(msg)
+                puts(colored.yellow(msg))
                 return msg
             new_staff = Staff(person_id, name)
             self.staff.append(new_staff)
@@ -137,14 +139,14 @@ class Amity(object):
             else:
                 msg = "The staff member {} has been successfully added and allocated the office {}".format(
                     name, allocation_office.room_name)
-                print(msg)
+                puts(colored.green(msg))
                 return msg
 
         elif role == "FELLOW":
 
             if name in [fellow.name for fellow in self.fellows]:
                 msg = "That Fellow already exists"
-                print(msg)
+                puts(colored.yellow(msg))
                 return msg
             new_fellow = Fellow(person_id, name)
 
@@ -159,7 +161,7 @@ class Amity(object):
                     msg = "The fellow {} has been successfully added and allocated the office {} and the living space {}".format(
                         name, allocation_office.room_name,
                         allocation_living_space.room_name)
-                    print(msg)
+                    puts(colored.green(msg))
                     return msg
                 # Allocate only living space and add the fellow to a waiting
                 # list
@@ -168,7 +170,7 @@ class Amity(object):
                     self.office_waitlist.append(new_fellow)
                     msg = "The fellow {} has been successfully added and allocated the living space {} but sorry we do not have any available offices".format(
                         name, allocation_living_space.room_name)
-                    print(msg)
+                    puts(colored.yellow(msg))
                     return msg
                 # Allocate only office and add the fellow to a waiting list
                 elif not isinstance(allocation_office, str) and isinstance(
@@ -176,7 +178,7 @@ class Amity(object):
                     self.living_waitlist.append(new_fellow)
                     msg = "The fellow {} has been successfully added and allocated the office {} but sorry we do not have any available living spaces".format(
                         name, allocation_office.room_name)
-                    print(msg)
+                    puts(colored.yellow(msg))
                     return msg
                 elif isinstance(allocation_office, str) and isinstance(
                         allocation_living_space, str):
@@ -184,7 +186,7 @@ class Amity(object):
                     self.office_waitlist.append(new_fellow)
                     msg = "The fellow {} has been successfully added and will be allocated an office and living space once they're available".format(
                         name)
-                    print(msg)
+                    puts(colored.yellow(msg))
                     return msg
             elif wants_accomodation == "N":
                 self.fellows.append(new_fellow)
@@ -192,20 +194,20 @@ class Amity(object):
                 if isinstance(allocation_office, str):
                     self.office_waitlist.append(new_fellow)
                     msg = allocation_office
-                    print(msg)
+                    puts(colored.red(msg))
                     return msg
                 else:
                     msg = "The fellow {} has been successfully added and allocated the office {}".format(
                         name, allocation_office.room_name)
-                    print(msg)
+                    puts(colored.green(msg))
                     return msg
 
     def print_room(self, room_name):
         """ Prints the names of all the people in a room on the
              screen """
-        #import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         all_rooms = self.living_spaces + self.offices
-        room_name = room_name
+        room_name = room_name.upper()
         room_occupants = [
             room.occupants for room in all_rooms if room.room_name == room_name
         ]
@@ -216,18 +218,18 @@ class Amity(object):
 
         # Check if room name exists
         if room_name not in office_name_list and room_name not in livingspace_name_list:
-            msg = " The room {} doesn't exist ".format(room_name.upper())
-            print(msg)
+            msg = "The room {} doesn't exist ".format(room_name.upper())
+            puts(colored.red(msg))
             return msg
         if len(room_occupants[0]) == 0:
             msg = "Room is empty"
-            print(msg)
+            puts(colored.yellow(msg))
             return msg
         else:
             msg = "The Occupants in {} are: ".format(room_name)
             for person in room_occupants[0]:
                 msg += "\n {} ".format(person.name)
-                print(msg)
+                puts(colored.green(msg))
             return msg
 
     def print_allocations(self, filename=None):
@@ -237,8 +239,10 @@ class Amity(object):
             response = "There are currently no living spaces\n\n"
 
         else:
-            response = ("\n\nLIST OF EACH LIVING SPACE AND IT'S OCCUPANTS\n" +
-                        "*" * 50 + "\n")
+            puts(
+                colored.blue(
+                    "\n\nLIST OF EACH LIVING SPACE AND IT'S OCCUPANTS\n")) + (
+                        colored.cyan("*" * 50 + "\n"))
             for room in self.living_spaces:
                 response += room.room_name.upper() + "\n" + ("*" * 50 + "\n")
                 people = [person.name for person in room.occupants]
@@ -248,22 +252,27 @@ class Amity(object):
             response += "There are currently no offices"
 
         else:
-            response = ("\n\nLIST OF EACH OFFICE AND IT'S OCCUPANTS\n" +
-                        "*" * 50 + "\n")
+            puts(colored.blue("\n\nLIST OF EACH OFFICE AND IT'S OCCUPANTS\n")
+                 ) + (colored.cyan("*" * 50 + "\n"))
             for room in self.offices:
-                response += room.room_name.upper() + "\n" + ("*" * 50 + "\n")
+                response += room.room_name.upper() + "\n"
+                puts(colored.cyan("*" * 50 + "\n"))
                 people = [person.name for person in room.occupants]
                 response += ", ".join(people) + "\n\n\n\n"
         if not filename:
-            print(response)
+            puts(colored.green(response))
             return response
         else:
-            print("Saving output data to file...")
+            puts(colored.green("Saving output data to file..."))
             txt_file = open(filename + ".txt", "w+")
             txt_file.write(response)
             txt_file.close()
-            return ("\033[1m \nData has been successfully saved to {}.txt\n \033[0m"
-                    .format(filename))
+            msg = "\nData has been successfully saved to {}.txt\n".format(
+                filename)
+            puts(colored.green(msg))
+
+            # return ("\nData has been successfully saved to {}.txt\n"
+            #         .format(filename))
 
     def print_unallocated(self, filename=None):
         """ This method prints a list of all staff and fellows, that have not been allocated any office or living space. """
@@ -277,18 +286,18 @@ class Amity(object):
             return msg
 
         else:
-            print("\n\nLIST OF ALL UNALLOCATED STAFF AND FELLOWS\n" +
-                  "*" * 50 + "\n")
+            print("\n\nLIST OF ALL UNALLOCATED STAFF AND FELLOWS\n" + "*" * 50
+                  + "\n")
             for person in self.office_waitlist:
                 if isinstance(person, Staff):
                     role = "STAFF"
                 else:
                     role = "FELLOW"
-                response += (person.name + "\t" + role +
-                             "\t" + "OFFICE SPACE" + "\n")
+                response += (
+                    person.name + "\t" + role + "\t" + "OFFICE SPACE" + "\n")
             for person in self.living_waitlist:
-                response += (person.name + "\t" + role +
-                             "\t" + "LIVING SPACE" + "\n")
+                response += (
+                    person.name + "\t" + role + "\t" + "LIVING SPACE" + "\n")
 
         if not filename:
             print(response)
@@ -299,8 +308,9 @@ class Amity(object):
             txt_file = open(filename + ".txt", "w+")
             txt_file.write(response)
             txt_file.close()
-            print("\033[1m \nData has been successfully saved to {}.txt\n \033[0m"
-                  .format(filename))
+            print(
+                "\033[1m \nData has been successfully saved to {}.txt\n \033[0m"
+                .format(filename))
 
     def load_people(self, filename):
         """ This method adds people to rooms from a txt file. """
@@ -331,9 +341,9 @@ class Amity(object):
         """ This method is used to reallocate a person from one room to another"""
         all_people = self.fellows + self.staff
         all_rooms = self.offices + self.living_spaces
-        name = f_name + l_name
+        name = f_name + " " + l_name
         name = name.upper()
-
+        new_room_name = new_room_name.upper()
 
         try:
             new_room = [
@@ -341,17 +351,15 @@ class Amity(object):
             ]
         except BaseException:
             msg = "The room {} does not exist".format(new_room_name)
-            print(msg)
             return msg
         # import pdb
         # pdb.set_trace()
         try:
             reallocated_person = [
-                person for person in all_people if person.name == name
+                person for person in all_people if person.name.upper() == name
             ]
         except BaseException:
             msg = "The person {} does not exist".format(name)
-            print(msg)
             return msg
         try:
             current_room = [
@@ -360,34 +368,29 @@ class Amity(object):
             ]
         except BaseException:
             current_room = None
-
         # Check if the person is a staff member looking for a living space
         if name in [person.name
                     for person in self.staff] and new_room_name in [
                         room.room_name for room in self.living_spaces
-        ]:
+                    ]:
             msg = "A staff member cannot be allocated a living space"
-            print(msg)
             return msg
 
         elif new_room == current_room:
             msg = "Cannot reallocate to the same room"
-            print(msg)
             return msg
 
         else:
-            if current_room is None:
+            if len(current_room) == 0:
                 new_room[0].occupants.append(reallocated_person[0])
                 msg = "{} has been successfully reallocated to {}".format(
                     name, new_room_name)
-                print(msg)
                 return msg
             else:
                 current_room[0].occupants.remove(reallocated_person[0])
                 new_room[0].occupants.append(reallocated_person[0])
                 msg = "{} has been successfully reallocated to {}".format(
                     name, new_room_name)
-                print(msg)
                 return msg
 
     def save_state(self, database_name=None):
@@ -404,8 +407,7 @@ class Amity(object):
             saved_room = RoomModel(
                 name=room.room_name,
                 room_type=room.room_type,
-                room_capacity=room.capacity
-            )
+                room_capacity=room.capacity)
             database_session.merge(saved_room)
         for person in all_people:
             if isinstance(person, Staff):
@@ -414,19 +416,18 @@ class Amity(object):
                     name=person.name,
                     role="STAFF",
                     office_space=person.allocated,
-                    living_space=None
-                )
+                    living_space=None)
             else:
                 saved_person = PersonModel(
                     id=person.person_id,
                     name=person.name,
                     role="FELLOW",
                     office_space=person.allocated,
-                    living_space=person.accomodated
-                )
+                    living_space=person.accomodated)
             database_session.merge(saved_person)
         database_session.commit()
         msg = "State Saved Successfully"
+        print(msg)
         return msg
 
     def load_state(self, database_name=None):
@@ -445,48 +446,52 @@ class Amity(object):
             for room in all_rooms:
                 if room.room_type == "LIVING SPACE":
                     living_space = Living_Space(room.name)
-                    current_occupants = session.query(PersonModel.name).filter(
-                        PersonModel.living_space == room.name).all()
-                    occupants_in_room = []
-                    for person in current_occupants:
-                        occupants_in_room.append(str(person[0]))
-                    living_space.occupants = occupants_in_room
+                    # current_occupants = session.query(PersonModel.name).filter(
+                    #     PersonModel.living_space == room.name).all()
+                    # occupants_in_room = []
+                    # for person in current_occupants:
+                    #     occupants_in_room.append(str(person[0]))
+                    # living_space.occupants = occupants_in_room
                     self.living_spaces.append(living_space)
                 else:
                     office_space = Living_Space(room.name)
-                    current_occupants = session.query(PersonModel.name).filter(
-                        PersonModel.office_space == room.name).all()
-                    occupants_in_room = []
-                    for person in current_occupants:
-                        occupants_in_room.append(str(person[0]))
+                    # current_occupants = session.query(PersonModel.name).filter(
+                    #     PersonModel.office_space == room.name).all()
+                    # occupants_in_room = []
+                    # for person in current_occupants:
+                    #     occupants_in_room.append(str(person[0]))
                     self.offices.append(office_space)
             for person in all_people:
                 if person.role == "FELLOW":
-                    person = Fellow(person.id, person.name)
-                    if person.living_space is None:
-                        self.living_waitlist.append(person)
+                    fellow = Fellow(person.id, person.name)
+                    self.fellows.append(fellow)
+                    person_name = person.name.split(' ')
+                    # person_ls = [
+                    #     room for room in self.living_spaces if room.name == person.living_space]
+                    # person_ls = person_ls[0]
+                    # person.accomodated = person_ls
+                    if person.living_space is not None:
+                        self.reallocate_person(person_name[0], person_name[1],
+                                               person.living_space)
                     else:
-                        person_ls = [
-                            room for room in self.living_spaces if room.name == person.living_space]
-                        person_ls = person_ls[0]
-                        person.accomodated = person_ls
+                        self.living_waitlist.append(fellow)
 
-                    if person.office_space is None:
-                        self.office_waitlist.append(person)
+                    if person.office_space is not None:
+                        self.reallocate_person(person_name[0], person_name[1],
+                                               person.office_space)
+
                     else:
-                        person_office = [
-                            room for room in self.offices if room.name == person.office_space]
-                        person_office = person_office[0]
-                        person.allocated = person_office
+                        self.office_waitlist.append(fellow)
                 else:
-                    person = Staff(person.id, person.name)
-                    if person.office_space is None:
-                        self.office_waitlist.append(person)
-                    else:
-                        person_office = [
-                            room for room in self.offices if room.name == person.office_space]
-                        person_office = person_office[0]
-                        person.allocated = person_office
+                    staff = Staff(person.id, person.name)
+                    self.staff.append(staff)
+                    person_name = person.name.split(' ')
+                    if person.office_space is not None:
+                        self.reallocate_person(person_name[0], person_name[1],
+                                               person.office_space)
 
+                    else:
+                        self.office_waitlist.append(staff)
             msg = "Data from {} loaded Successfully!.".format(database_name)
+            print(msg)
             return msg
