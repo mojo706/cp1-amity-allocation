@@ -1,14 +1,14 @@
+""" This file contains all the functions of the amity cli app """
+
 import os
 import random
 
-from Persons.persons import Fellow, Staff, Person
-from Rooms.rooms import Room, Office, Living_Space
-from Models.models import Base, CreateDb, PersonModel, RoomModel
+from person.persons import Fellow, Staff
+from room.rooms import Room, Office, Living_Space
+from model.models import Base, CreateDb, PersonModel, RoomModel
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from termcolor import cprint, colored, COLORS
 from clint.textui import colored, puts
-""" This file contains all the functions of the amity cli app """
 
 
 class Amity(object):
@@ -66,13 +66,14 @@ class Amity(object):
             return msg
 
         else:
-            msg = " Room type can only be an office or a living space"
+            msg = "Room type can only be an office or a living space"
             puts(colored.yellow(msg))
             return msg
 
     def allocate_office_space(self, person):
         """ A method that randomly allocates an available office to a fellow or
          member of staff """
+
         available_offices = []
 
         # loop through all the offices and determine all available offices
@@ -118,10 +119,10 @@ class Amity(object):
         name = name.upper()
 
         if not (f_name + l_name).isalpha():
-            raise ValueError(" Name and Role must be string")
+            return "First and Last name must be alphabets"
 
         if role not in roles:
-            raise ValueError("Invalid Role")
+            return "Invalid Role"
 
         if role == "STAFF":
             if name in [staff.name for staff in self.staff]:
@@ -133,8 +134,9 @@ class Amity(object):
             allocation_office = self.allocate_office_space(new_staff)
             if isinstance(allocation_office, str):
                 self.office_waitlist.append(new_staff)
-                msg = allocation_office
-                print(msg)
+                msg = "The staff member {} has been successfully added and will be allocated an office once it's available.".format(
+                    new_staff.name)
+                puts(colored.yellow(msg))
                 return msg
             else:
                 msg = "The staff member {} has been successfully added and allocated the office {}".format(
@@ -214,7 +216,7 @@ class Amity(object):
         office_name_list = [room.room_name for room in self.offices]
         livingspace_name_list = [room.room_name for room in self.living_spaces]
 
-        msg = ""
+        # msg = ""
 
         # Check if room name exists
         if room_name not in office_name_list and room_name not in livingspace_name_list:
@@ -270,7 +272,7 @@ class Amity(object):
             msg = "\nData has been successfully saved to {}.txt\n".format(
                 filename)
             puts(colored.green(msg))
-
+            return msg
             # return ("\nData has been successfully saved to {}.txt\n"
             #         .format(filename))
 
@@ -299,18 +301,18 @@ class Amity(object):
                 response += (
                     person.name + "\t" + role + "\t" + "LIVING SPACE" + "\n")
 
-        if not filename:
-            print(response)
-            return response
-        else:
+        if filename:
             # create file with the given filename and write res to it
-            print("Saving unallocations list to file...")
+            puts(colored.cyan("Saving unallocations list to file..."))
             txt_file = open(filename + ".txt", "w+")
             txt_file.write(response)
             txt_file.close()
-            print(
-                "\033[1m \nData has been successfully saved to {}.txt\n \033[0m"
-                .format(filename))
+            msg = "Data has been successfully saved to {}.txt".format(filename)
+            puts(colored.green(msg))
+            return msg
+        else:
+            print(response)
+            # return response
 
     def load_people(self, filename):
         """ This method adds people to rooms from a txt file. """
@@ -372,7 +374,7 @@ class Amity(object):
         if name in [person.name
                     for person in self.staff] and new_room_name in [
                         room.room_name for room in self.living_spaces
-                    ]:
+        ]:
             msg = "A staff member cannot be allocated a living space"
             return msg
 
@@ -401,6 +403,8 @@ class Amity(object):
             database = CreateDb("amity")
         else:
             database = CreateDb(database_name)
+
+        Amity.clear_db(database_name)
         Base.metadata.bind = database.engine
         database_session = database.session()
         for room in all_rooms:
@@ -495,3 +499,30 @@ class Amity(object):
             msg = "Data from {} loaded Successfully!.".format(database_name)
             print(msg)
             return msg
+
+    def clear_db(self, database_name=''):
+        """
+        Method to clear DB before save state
+        """
+
+        if database_name:
+
+            name = database_name
+
+        else:
+
+            name = 'amity_db'
+
+        Session = sessionmaker()
+
+        engine = create_engine("sqlite:///" + database_name + ".db")
+
+        Session.configure(bind=engine)
+
+        # Drop all tables then recreate them.
+
+        Base.metadata.drop_all(bind=engine)
+
+        Base.metadata.create_all(bind=engine)
+
+        return 'Database cleared successfully.'
