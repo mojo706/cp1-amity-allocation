@@ -125,10 +125,14 @@ class Amity(object):
             return "Invalid Role"
 
         if role == "STAFF":
+            no_living = ""
+            if wants_accomodation == "Y":
+                no_living = " Sorry a staff member cannot be assigned a living space"
+
             if name in [staff.name for staff in self.staff]:
                 msg = "That Staff member already exists"
                 puts(colored.yellow(msg))
-                return msg
+
             new_staff = Staff(person_id, name)
             self.staff.append(new_staff)
             allocation_office = self.allocate_office_space(new_staff)
@@ -136,13 +140,13 @@ class Amity(object):
                 self.office_waitlist.append(new_staff)
                 msg = "The staff member {} has been successfully added and will be allocated an office once it's available.".format(
                     new_staff.name)
-                puts(colored.yellow(msg))
-                return msg
+                puts(colored.yellow(msg + no_living))
+                return msg + no_living
             else:
-                msg = "The staff member {} has been successfully added and allocated the office {}".format(
+                msg = "The staff member {} has been successfully added and allocated the office {}.".format(
                     name, allocation_office.room_name)
-                puts(colored.green(msg))
-                return msg
+                puts(colored.green(msg + no_living))
+                return msg + no_living
 
         elif role == "FELLOW":
 
@@ -203,6 +207,29 @@ class Amity(object):
                         name, allocation_office.room_name)
                     puts(colored.green(msg))
                     return msg
+
+    def delete_person(self, name):
+        """ Deletes a person from the Amity system"""
+        all_people = self.fellows + self.staff
+        all_rooms = self.offices + self.living_spaces
+        # Loop through all people to find the room they are in
+        try:
+            deleted_person = [
+                person for person in all_people if person.name.upper() == name
+            ]
+        except BaseException:
+            msg = "The person {} does not exist".format(name)
+            return msg
+
+        person_room = [
+            room for room in all_rooms
+            if deleted_person[0] in room.occupants]
+
+        person_room[0].occupants.remove(deleted_person[0])
+        msg = "{} has been successfully deleted from Amity."
+        puts(colored.green(msg))
+        return msg
+
 
     def print_room(self, room_name):
         """ Prints the names of all the people in a room on the
@@ -354,8 +381,7 @@ class Amity(object):
         except BaseException:
             msg = "The room {} does not exist".format(new_room_name)
             return msg
-        # import pdb
-        # pdb.set_trace()
+
         try:
             reallocated_person = [
                 person for person in all_people if person.name.upper() == name
@@ -374,7 +400,7 @@ class Amity(object):
         if name in [person.name
                     for person in self.staff] and new_room_name in [
                         room.room_name for room in self.living_spaces
-        ]:
+                    ]:
             msg = "A staff member cannot be allocated a living space"
             return msg
 
@@ -394,6 +420,26 @@ class Amity(object):
                 msg = "{} has been successfully reallocated to {}".format(
                     name, new_room_name)
                 return msg
+
+    def delete_room(self, room):
+        """ This method deletes a room from the Amity app"""
+        all_people = self.staff + self.fellows
+        all_rooms = self.offices + self.living_spaces
+
+        deleted_room = [room for room in all_rooms if room.room_name == room]
+
+        # TODO: check if room is office or living_space
+        # TODO: loop through all occupant in room and append them to relevant waiting list
+        # TODO: delete the room from amity
+
+    def update_database(self, database_name=None):
+        """ Method that updates given database: Helper function for save_state()"""
+        # TODO: create the method XD
+        # TODO: Method should determine which are the affected rows and columns and update them
+        # TODO: Learn SQL Alchemy to be able to do this seamlessly
+    def list_people(self):
+        """ Method that list all the people in Amity, showing their room(s) and role"""
+        # TODO: Find a good way of displaying the room and role of the person
 
     def save_state(self, database_name=None):
         """ Method that saves all the data into a given database """
