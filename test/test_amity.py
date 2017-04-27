@@ -236,6 +236,7 @@ class TestAmity(unittest.TestCase):
 
     def test_print_allocations_with_filename(self):
         self.amity.print_allocations('file')
+
         self.assertTrue(os.path.isfile('file.txt'))
         os.remove('file.txt')
 
@@ -244,7 +245,21 @@ class TestAmity(unittest.TestCase):
         self.amity.add_person("Kosy", "Kironde", "STAFF")
         unallocated = self.amity.print_unallocated("test")
         expected_output = "Data has been successfully saved to test.txt"
+
         self.assertEqual(unallocated, expected_output)
+
+    def test_delete_room(self):
+        """ Test whether a room is deleted from amity when the delete_room method is called"""
+        self.amity.create_room("LIVINGSPACE", "Valhala")
+        self.amity.create_room("OFFICE", "Addis")
+        self.amity.add_person("Kosy", "DThree", "STAFF")
+        self.amity.create_room("OFFICE", "Accra")
+        self.amity.add_person("Janoosh", "Janoosh", "FELLOW", "Y")
+        deleted = self.amity.delete_room("Accra")
+        expected_output = "The room ACCRA has been deleted from Amity."
+
+        self.assertEqual(deleted, expected_output)
+
 
     def test_save_state(self):
         """ Tests whether the current state of the app has been saved to a database """
