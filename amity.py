@@ -208,10 +208,42 @@ class Amity(object):
                     puts(colored.green(msg))
                     return msg
 
+    def list_people(self):
+        """ Method that list all the people in Amity, showing their room(s) and role"""
+        # TODO: Find a good way of displaying the room and role of the person
+        msg = "\n\nLIST OF ALL STAFF \n" + "*" * 50 + "\n\n"
+        if len(self.staff) == 0:
+            msg += "There are currently no staff members!"
+        else:
+            for staff in self.staff:
+                if staff.allocated is None:
+                    o_allocated = "No Office"
+                else:
+                    o_allocated = staff.allocated.room_name
+                msg += staff.name + "\t" + o_allocated + "\n"
+
+        msg += "\n\nLIST OF ALL FELLOWS \n" + "*" * 50 + "\n\n"
+        if len(self.fellows) == 0:
+            msg += "There are currently no fellows!"
+        else:
+            for fellow in self.fellows:
+                if fellow.accomodated is None:
+                    l_accomodated = "No Livingspace"
+                else:
+                    l_accomodated = fellow.accomodated.room_name
+                if fellow.allocated is None:
+                    o_allocated = "No Office"
+                else:
+                    o_allocated = fellow.allocated.room_name
+                msg += fellow.name + "\t" + o_allocated + "\t" + l_accomodated + "\n"
+        puts(colored.cyan(msg))
+        return "List Printed Successfully"
+
     def delete_person(self, name):
         """ Deletes a person from the Amity system"""
         all_people = self.fellows + self.staff
         all_rooms = self.offices + self.living_spaces
+        name = name.upper()
         # Loop through all people to find the room they are in
         try:
             deleted_person = [
