@@ -84,7 +84,7 @@ class TestAmity(unittest.TestCase):
         """ test whether person has been successfully added """
         self.amity.create_room("OFFICE", "Addis")
         room_msg = self.amity.add_person("Omar", "Eugene", "STAFF")
-        expected_output = "The staff member OMAR EUGENE has been successfully added and allocated the office ADDIS"
+        expected_output = "The staff member OMAR EUGENE has been successfully added and allocated the office ADDIS."
         self.assertEqual(room_msg, expected_output)
 
     def test_add_person_adding_staff_wants_accomodation(self):
@@ -97,10 +97,11 @@ class TestAmity(unittest.TestCase):
 
     def test_add_person_staff_already_exists(self):
         """ test whether person has been successfully added """
+        self.amity.create_room("OFFICE", "Addis")
         self.amity.add_person("Omar", "Eugene", "STAFF")
-        room_msg = self.amity.add_person("Omar", "Eugene", "STAFF")
+        chuchu = self.amity.add_person("Omar", "Eugene", "STAFF")
         expected_output = "That Staff member already exists"
-        self.assertEqual(room_msg, expected_output)
+        self.assertEqual(chuchu, expected_output)
 
     def test_add_person_adding_staff_no_offices(self):
         """ test whether staff has been successfully added with no office"""
@@ -161,7 +162,7 @@ class TestAmity(unittest.TestCase):
         self.amity.create_room("OFFICE", "Addis")
         all_staff = self.amity.staff
         room_msg = self.amity.add_person("Kosy", "DThree", "STAFF")
-        expected_output = "The staff member KOSY DTHREE has been successfully added and allocated the office ADDIS"
+        expected_output = "The staff member KOSY DTHREE has been successfully added and allocated the office ADDIS."
 
         self.assertEqual(room_msg, expected_output)
         self.assertTrue(

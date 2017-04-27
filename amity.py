@@ -132,6 +132,7 @@ class Amity(object):
             if name in [staff.name for staff in self.staff]:
                 msg = "That Staff member already exists"
                 puts(colored.yellow(msg))
+                return msg
 
             new_staff = Staff(person_id, name)
             self.staff.append(new_staff)
@@ -452,16 +453,32 @@ class Amity(object):
                     name, new_room_name)
                 return msg
 
-    def delete_room(self, room):
+    def delete_room(self, room_name):
         """ This method deletes a room from the Amity app"""
         all_people = self.staff + self.fellows
         all_rooms = self.offices + self.living_spaces
+        room_name = room_name.upper()
 
-        deleted_room = [room for room in all_rooms if room.room_name == room]
-
-        # TODO: check if room is office or living_space
-        # TODO: loop through all occupant in room and append them to relevant waiting list
-        # TODO: delete the room from amity
+        deleted_room = [room for room in all_rooms if room.room_name == room_name]
+        if len(deleted_room) == 0:
+            msg = "The room {} does not exist".format(room_name)
+            puts(colored.red(msg))
+            return msg
+        else:
+            deleted_room = deleted_room[0]
+            if isinstance(deleted_room, Office):
+                for person in deleted_room.occupants:
+                    person.allocated = None
+                    self.office_waitlist.append(person)
+                self.offices.remove(deleted_room)
+            else:
+                for person in deleted_room.occupants:
+                    person.accomodated = None
+                    self.living_waitlist.append(person)
+                self.living_spaces.remove(deleted_room)
+        msg = "The room {} has been deleted from Amity.".format(room_name)
+        puts(colored.green(msg))
+        return msg
 
     def update_database(self, database_name=None):
         """ Method that updates given database: Helper function for save_state()"""
@@ -524,30 +541,15 @@ class Amity(object):
             for room in all_rooms:
                 if room.room_type == "LIVING SPACE":
                     living_space = Living_Space(room.name)
-                    # current_occupants = session.query(PersonModel.name).filter(
-                    #     PersonModel.living_space == room.name).all()
-                    # occupants_in_room = []
-                    # for person in current_occupants:
-                    #     occupants_in_room.append(str(person[0]))
-                    # living_space.occupants = occupants_in_room
                     self.living_spaces.append(living_space)
                 else:
                     office_space = Living_Space(room.name)
-                    # current_occupants = session.query(PersonModel.name).filter(
-                    #     PersonModel.office_space == room.name).all()
-                    # occupants_in_room = []
-                    # for person in current_occupants:
-                    #     occupants_in_room.append(str(person[0]))
                     self.offices.append(office_space)
             for person in all_people:
                 if person.role == "FELLOW":
                     fellow = Fellow(person.id, person.name)
                     self.fellows.append(fellow)
                     person_name = person.name.split(' ')
-                    # person_ls = [
-                    #     room for room in self.living_spaces if room.name == person.living_space]
-                    # person_ls = person_ls[0]
-                    # person.accomodated = person_ls
                     if person.living_space is not None:
                         self.reallocate_person(person_name[0], person_name[1],
                                                person.living_space)
