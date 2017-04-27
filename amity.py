@@ -254,14 +254,13 @@ class Amity(object):
             return msg
 
         person_room = [
-            room for room in all_rooms
-            if deleted_person[0] in room.occupants]
+            room for room in all_rooms if deleted_person[0] in room.occupants
+        ]
 
         person_room[0].occupants.remove(deleted_person[0])
-        msg = "{} has been successfully deleted from Amity."
+        msg = "{} has been successfully deleted from Amity.".format(name)
         puts(colored.green(msg))
         return msg
-
 
     def print_room(self, room_name):
         """ Prints the names of all the people in a room on the
