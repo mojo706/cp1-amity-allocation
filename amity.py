@@ -468,9 +468,6 @@ class Amity(object):
         # TODO: create the method XD
         # TODO: Method should determine which are the affected rows and columns and update them
         # TODO: Learn SQL Alchemy to be able to do this seamlessly
-    def list_people(self):
-        """ Method that list all the people in Amity, showing their room(s) and role"""
-        # TODO: Find a good way of displaying the room and role of the person
 
     def save_state(self, database_name=None):
         """ Method that saves all the data into a given database """

@@ -167,6 +167,20 @@ class TestAmity(unittest.TestCase):
         self.assertTrue(
             any(staff.name == "KOSY DTHREE" for staff in all_staff))
 
+    def test_list_people(self):
+        """ Test if all people are listed successfully """
+        self.amity.add_person("Janoosh", "Janoosh", "Fellow", "Y")
+        self.amity.add_person("Shem", "Ogumbe", "Staff")
+        people_msg = self.amity.list_people()
+        expected_output = "List Printed Successfully"
+        self.assertEqual(people_msg, expected_output)
+
+    def test_list_people_with_no_people(self):
+        """ Test if all people are listed successfully """
+        people_msg = self.amity.list_people()
+        expected_output = "List Printed Successfully"
+        self.assertEqual(people_msg, expected_output)
+
     def test_reallocate_person(self):
         """ Move a person from one office space or living space to another"""
         self.amity.create_room("LIVINGSPACE", "Valhala")
@@ -201,7 +215,7 @@ class TestAmity(unittest.TestCase):
         self.amity.create_room("OFFICE", "Addis")
         self.amity.add_person("Uzumaki", "Naruto", "Fellow", "Y")
         msg = self.amity.delete_person("Uzumaki Naruto")
-        expected_output = "UZUMAKI NARUTO has been successfully deleted from Amity"
+        expected_output = "UZUMAKI NARUTO has been successfully deleted from Amity."
 
         self.assertEqual(msg, expected_output)
 
