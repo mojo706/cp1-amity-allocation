@@ -114,6 +114,18 @@ class AppAmity(cmd.Cmd):
             print(e.args)
 
     @docopt_cmd
+    def do_list_people(self, args):
+        """ Usage: list_people() """
+
+        self.Amity.list_people()
+
+    @docopt_cmd
+    def do_delete_person(self, args):
+        """ Usage: delete_person <f_name> <l_name> """
+
+        self.Amity.delete_person(args["<f_name>"], args["<l_name>"])
+
+    @docopt_cmd
     def do_reallocate_person(self, args):
         """ Usage: reallocate_person <f_name> <l_name> <new_room_name> """
 
@@ -134,12 +146,6 @@ class AppAmity(cmd.Cmd):
         filename = args["--o"]
 
         self.Amity.print_allocations(filename)
-        # if not args["-o"]:
-        #     self.Amity.print_allocations()
-
-        # elif args["-o"] != None:
-        #     # args["-o"] = "allocations"
-        #     self.Amity.print_allocations(args["-o"])
 
     @docopt_cmd
     def do_print_unallocated(self, args):
@@ -158,6 +164,12 @@ class AppAmity(cmd.Cmd):
         self.Amity.print_room(args["<room_name>"])
 
     @docopt_cmd
+    def do_delete_room(self, args):
+        """ Usage: delete_room <room_name> """
+
+        self.Amity.delete_room(args["<room_name>"])
+
+    @docopt_cmd
     def do_save_state(self, args):
         """ Usage: save_state [--db=<database_name>] """
         if not args["--db"]:
@@ -173,7 +185,7 @@ class AppAmity(cmd.Cmd):
 
     def do_quit(self, args):
         """ Quits out of Interactive Mode """
-        print("Exiting Application. Catch you later!")
+        puts(colored.cyan("Exiting Application. Catch you later!"))
 
         exit()
 
