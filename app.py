@@ -7,13 +7,15 @@
  Usage:
     Amity create_room <room_type> <room_names>...
     Amity add_person <f_name> <l_name> (Fellow|Staff) [<wants_accomodation>]
+    Amity list_people
+    Amity delete_person <f_name> <l_name>
     Amity reallocate_person <name> <new_room_name>
-    Amity allocate_unallocated
     Amity reallocate_person <person_identifier> <new_room_name>
     Amity load_people
     Amity print_allocations [-o=<filename>]
     Amity print_unallocated [-o=<filename>]
     Amity print_room <room_name>
+    Amity delete_room <room_name>
     Amity save_state [--db=<database_name>]
     Amity load_state [--db=<database_name>]
     Amity (-i | --interactive)
