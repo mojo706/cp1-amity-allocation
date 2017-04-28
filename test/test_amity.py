@@ -177,7 +177,7 @@ class TestAmity(unittest.TestCase):
         self.assertEqual(people_msg, expected_output)
 
     def test_list_people_with_no_people(self):
-        """ Test if all people are listed successfully """
+        """ Test list people with no people added """
         people_msg = self.amity.list_people()
         expected_output = "List Printed Successfully"
         self.assertEqual(people_msg, expected_output)
@@ -213,10 +213,29 @@ class TestAmity(unittest.TestCase):
 
     def test_delete_person(self):
         """ Checks if delete_person() works"""
+        self.amity.create_room("LIVINGSPACE", "Ruby")
         self.amity.create_room("OFFICE", "Addis")
         self.amity.add_person("Uzumaki", "Naruto", "Fellow", "Y")
-        msg = self.amity.delete_person("Uzumaki Naruto")
+        msg = self.amity.delete_person("Uzumaki", "Naruto")
         expected_output = "UZUMAKI NARUTO has been successfully deleted from Amity."
+
+        self.assertEqual(msg, expected_output)
+
+    def test_delete_person_doesnt_exist(self):
+        """ Checks if delete_person() works"""
+        self.amity.create_room("LIVINGSPACE", "Ruby")
+        self.amity.create_room("OFFICE", "Addis")
+        self.amity.add_person("Uzumaki", "Naruto", "Fellow", "Y")
+        msg = self.amity.delete_person("Uzimaki", "Naruto")
+        expected_output = "The person UZIMAKI NARUTO does not exist"
+
+        self.assertEqual(msg, expected_output)
+
+    def test_delete_person_no_rooms(self):
+        """ Checks if delete_person() works"""
+        self.amity.add_person("Uzumaki", "Naruto", "Fellow", "Y")
+        msg = self.amity.delete_person("Uzumaki", "Naruto")
+        expected_output = 'UZUMAKI NARUTO has been successfully deleted from Amity.'
 
         self.assertEqual(msg, expected_output)
 
