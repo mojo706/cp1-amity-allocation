@@ -392,7 +392,7 @@ class Amity(object):
         filepath = os.path.join(amitypath, filename + ".txt")
         if not os.path.isfile(filepath):
             msg = "{} is not a valid file path.".format(filepath)
-            print(msg)
+            puts(colored.yellow(msg))
             return msg
         with open(filepath, 'r') as f:
             for line in f:
@@ -406,7 +406,7 @@ class Amity(object):
                     wants_accomodation = word_list[3]
                 self.add_person(f_name, l_name, role, wants_accomodation)
         msg = "People were loaded successfully!"
-        print(msg)
+        puts(colored.green(msg))
         return msg
 
     def reallocate_person(self, f_name, l_name, new_room_name):
@@ -585,7 +585,6 @@ class Amity(object):
                     if guy.living_space is None:
                         self.living_waitlist.append(fellow)
                     fellow.accomodated = guy.living_space
-                    print(fellow.accomodated)
             else:
                 msg += "The person {} already exists\n".format(guy.name)
         all_people = self.fellows + self.staff
