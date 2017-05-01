@@ -308,7 +308,7 @@ class Amity(object):
             msg = "The Occupants in {} are: ".format(room_name)
             for person in room_occupants[0]:
                 msg += "\n {} ".format(person.name)
-                puts(colored.green(msg))
+            puts(colored.magenta(msg))
             return msg
 
     def print_allocations(self, filename=None):
@@ -573,12 +573,19 @@ class Amity(object):
                 if guy.role == "STAFF":
                     staff = Staff(guy.id, guy.name)
                     self.staff.append(staff)
+                    if guy.office_space is None:
+                        self.office_waitlist.append(staff)
                     staff.allocated = guy.office_space
                 else:
                     fellow = Fellow(guy.id, guy.name)
                     self.fellows.append(fellow)
+                    if guy.office_space is None:
+                        self.office_waitlist.append(fellow)
                     fellow.allocated = guy.office_space
-                    fellow.accommodated = guy.living_space
+                    if guy.living_space is None:
+                        self.living_waitlist.append(fellow)
+                    fellow.accomodated = guy.living_space
+                    print(fellow.accomodated)
             else:
                 msg += "The person {} already exists\n".format(guy.name)
         all_people = self.fellows + self.staff
