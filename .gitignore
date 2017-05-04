@@ -1,0 +1,8 @@
+.cache
+__pycache__
+.DS_Store
+*.db
+test.txt
+.coveragerc
+.coverage
+*.txt
